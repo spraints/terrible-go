@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e
+set -o nounset
+
+root="$(cd "$(dirname $0)"/..; pwd -P)"
+image=golang:1.12.5
+home_parent=/home
+home=$home_parent/me
+
+docker run --rm \
+  --volume terrible-go-home:$home_parent \
+  $image \
+  bash -ec "mkdir -p $home; chown $(id -u):$(id -g) $home"
+
+docker run -it --rm \
+  --user $(id -u):$(id -g) \
+  --volume $SSH_AUTH_SOCK:$SSH_AUTH_SOCK \
+  --env SSH_AUTH_SOCK=$SSH_AUTH_SOCK \
+  --volume terrible-go-home:$home_parent \
+  --env HOME=$home \
+  --volume $(pwd):$(pwd) \
+  --workdir $(pwd) \
+  $image "$@"
