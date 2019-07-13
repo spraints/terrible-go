@@ -36,6 +36,18 @@ func (s slice) Each(fn interface{}) {
 	})
 }
 
+func (s slice) All(predicate interface{}) bool {
+	fnVal := reflect.ValueOf(predicate)
+
+	all := true
+	eachValue(s.Value, func(item reflect.Value) {
+		outVal := fnVal.Call([]reflect.Value{item})[0]
+		all = all && outVal.Bool()
+	})
+
+	return all
+}
+
 func eachValue(slice reflect.Value, fn func(reflect.Value)) {
 	inLen := slice.Len()
 

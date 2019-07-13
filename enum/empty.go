@@ -14,3 +14,7 @@ func (emptyType) Map(fn interface{}) Enum {
 
 func (emptyType) Each(fn interface{}) {
 }
+
+func (emptyType) All(interface{}) bool {
+	return true
+}

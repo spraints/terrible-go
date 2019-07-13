@@ -9,6 +9,7 @@ type Enum interface {
 
 	Map(fn interface{}) Enum
 	Each(fn interface{})
+	All(predicate interface{}) bool
 }
 
 // New makes an Enum out of whatever slice you give it.
