@@ -1,5 +1,7 @@
 package enum
 
+import "reflect"
+
 // Enum is a wrapper around any type.
 type Enum interface {
 	// Get returns the underlying slice from the current enum.
@@ -11,13 +13,14 @@ type Enum interface {
 
 // New makes an Enum out of whatever slice you give it.
 func New(raw interface{}) Enum {
-	return &enum{raw}
-}
-
-type enum struct {
-	raw interface{}
-}
-
-func (e *enum) Get() interface{} {
-	return e.raw
+	val := reflect.ValueOf(raw)
+	switch val.Kind() {
+	case reflect.Slice:
+		if val.Len() == 0 {
+			return empty
+		}
+		return slice(val)
+	default: // Or maybe Invalid?
+		return empty
+	}
 }
