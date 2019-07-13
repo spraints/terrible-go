@@ -8,11 +8,11 @@ func (emptyType) Get() interface{} {
 	return nil
 }
 
-func (emptyType) Map(fn interface{}) Enum {
-	return empty
+func (emptyType) Each(interface{}) {
 }
 
-func (emptyType) Each(fn interface{}) {
+func (emptyType) Map(interface{}) Enum {
+	return empty
 }
 
 func (emptyType) All(interface{}) bool {

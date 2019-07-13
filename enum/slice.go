@@ -10,8 +10,16 @@ func (s slice) Get() interface{} {
 	return s.Interface()
 }
 
-func (s slice) Map(fn interface{}) Enum {
+func (s slice) Each(fn interface{}) {
 	fnVal := reflect.ValueOf(fn)
+
+	eachValue(s.Value, func(item reflect.Value) {
+		fnVal.Call([]reflect.Value{item})
+	})
+}
+
+func (s slice) Map(transform interface{}) Enum {
+	fnVal := reflect.ValueOf(transform)
 	fnType := fnVal.Type()
 	itemType := fnType.Out(0)
 
@@ -26,14 +34,6 @@ func (s slice) Map(fn interface{}) Enum {
 	resVal := reflect.MakeSlice(reflect.SliceOf(itemType), 0, inLen)
 	resVal = reflect.Append(resVal, outVals...)
 	return slice{resVal}
-}
-
-func (s slice) Each(fn interface{}) {
-	fnVal := reflect.ValueOf(fn)
-
-	eachValue(s.Value, func(item reflect.Value) {
-		fnVal.Call([]reflect.Value{item})
-	})
 }
 
 func (s slice) All(predicate interface{}) bool {

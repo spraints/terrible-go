@@ -7,8 +7,8 @@ type Enum interface {
 	// Get returns the underlying slice from the current enum.
 	Get() interface{}
 
-	Map(fn interface{}) Enum
 	Each(fn interface{})
+	Map(transform interface{}) Enum
 	All(predicate interface{}) bool
 }
 
