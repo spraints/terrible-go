@@ -10,6 +10,7 @@ type Enum interface {
 	Each(fn interface{})
 	Map(transform interface{}) Enum
 	All(predicate interface{}) bool
+	Any(predicate interface{}) bool
 }
 
 // New makes an Enum out of whatever slice you give it.
