@@ -19,6 +19,7 @@ docker run -it --rm \
   --env SSH_AUTH_SOCK=$SSH_AUTH_SOCK \
   --volume terrible-go-home:$home_parent \
   --env HOME=$home \
+  --env GOPATH=$home/go \
   --volume $(pwd):$(pwd) \
   --workdir $(pwd) \
   $image "$@"
