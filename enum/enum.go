@@ -19,7 +19,7 @@ func New(raw interface{}) Enum {
 		if val.Len() == 0 {
 			return empty
 		}
-		return slice(val)
+		return slice{val}
 	default: // Or maybe Invalid?
 		return empty
 	}

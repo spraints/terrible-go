@@ -2,10 +2,12 @@ package enum
 
 import "reflect"
 
-type slice reflect.Value
+type slice struct {
+	reflect.Value
+}
 
 func (s slice) Get() interface{} {
-	return reflect.Value(s).Interface()
+	return s.Interface()
 }
 
 func (s slice) Map(fn interface{}) Enum {
@@ -13,23 +15,23 @@ func (s slice) Map(fn interface{}) Enum {
 	fnType := fnVal.Type()
 	itemType := fnType.Out(0)
 
-	inLen := reflect.Value(s).Len()
+	inLen := s.Len()
 
 	outVals := make([]reflect.Value, 0, inLen)
-	eachValue(reflect.Value(s), func(item reflect.Value) {
+	eachValue(s.Value, func(item reflect.Value) {
 		outVal := fnVal.Call([]reflect.Value{item})[0]
 		outVals = append(outVals, outVal)
 	})
 
 	resVal := reflect.MakeSlice(reflect.SliceOf(itemType), 0, inLen)
 	resVal = reflect.Append(resVal, outVals...)
-	return slice(resVal)
+	return slice{resVal}
 }
 
 func (s slice) Each(fn interface{}) {
 	fnVal := reflect.ValueOf(fn)
 
-	eachValue(reflect.Value(s), func(item reflect.Value) {
+	eachValue(s.Value, func(item reflect.Value) {
 		fnVal.Call([]reflect.Value{item})
 	})
 }
