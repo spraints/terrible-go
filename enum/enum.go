@@ -6,6 +6,7 @@ type Enum interface {
 	Get() interface{}
 
 	Map(fn interface{}) Enum
+	Each(fn interface{})
 }
 
 // New makes an Enum out of whatever slice you give it.
