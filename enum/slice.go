@@ -52,6 +52,22 @@ func (s slice) Select(predicate interface{}) Enum {
 	return sliceFrom(s.Type().Elem(), selectedVals)
 }
 
+func (s slice) Reject(predicate interface{}) Enum {
+	fnVal := reflect.ValueOf(predicate)
+
+	inLen := s.Len()
+	rejectedVals := make([]reflect.Value, 0, inLen)
+
+	eachValue(s.Value, func(item reflect.Value) bool {
+		if !fnVal.Call([]reflect.Value{item})[0].Bool() {
+			rejectedVals = append(rejectedVals, item)
+		}
+		return true
+	})
+
+	return sliceFrom(s.Type().Elem(), rejectedVals)
+}
+
 func (s slice) Reduce(init, reducer interface{}) interface{} {
 	fnVal := reflect.ValueOf(reducer)
 	memo := reflect.ValueOf(init)

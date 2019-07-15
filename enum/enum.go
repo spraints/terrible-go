@@ -26,6 +26,12 @@ type Enum interface {
 	//   => []int{2,4}
 	Select(predicate interface{}) Enum
 
+	// Reject removes elements from this enum.
+	//
+	//   enum.New([]int{1,2,3,4}).Reject(func(x int) { return x % 2 == 0 }).Get()
+	//   => []int{1,3}
+	Reject(predicate interface{}) Enum
+
 	// Reduce creates a single value from this enum.
 	//
 	//   enum.New([]int{1,2,3}).Reduce(0, func(sum, x int) int { return sum + x })
