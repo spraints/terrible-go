@@ -15,6 +15,10 @@ func (emptyType) Map(interface{}) Enum {
 	return empty
 }
 
+func (emptyType) Select(interface{}) Enum {
+	return empty
+}
+
 func (emptyType) Reduce(init, _ interface{}) interface{} {
 	return init
 }

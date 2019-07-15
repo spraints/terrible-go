@@ -33,9 +33,23 @@ func (s slice) Map(transform interface{}) Enum {
 		return true
 	})
 
-	resVal := reflect.MakeSlice(reflect.SliceOf(itemType), 0, inLen)
-	resVal = reflect.Append(resVal, outVals...)
-	return slice{resVal}
+	return sliceFrom(itemType, outVals)
+}
+
+func (s slice) Select(predicate interface{}) Enum {
+	fnVal := reflect.ValueOf(predicate)
+
+	inLen := s.Len()
+	selectedVals := make([]reflect.Value, 0, inLen)
+
+	eachValue(s.Value, func(item reflect.Value) bool {
+		if fnVal.Call([]reflect.Value{item})[0].Bool() {
+			selectedVals = append(selectedVals, item)
+		}
+		return true
+	})
+
+	return sliceFrom(s.Type().Elem(), selectedVals)
 }
 
 func (s slice) Reduce(init, reducer interface{}) interface{} {
@@ -84,4 +98,10 @@ func eachValue(slice reflect.Value, fn func(reflect.Value) bool) {
 			break
 		}
 	}
+}
+
+func sliceFrom(itemType reflect.Type, vals []reflect.Value) slice {
+	resVal := reflect.MakeSlice(reflect.SliceOf(itemType), 0, len(vals))
+	resVal = reflect.Append(resVal, vals...)
+	return slice{resVal}
 }
