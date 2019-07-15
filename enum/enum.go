@@ -32,6 +32,13 @@ type Enum interface {
 	//   => []int{1,3}
 	Reject(predicate interface{}) Enum
 
+	// Partition divides this enum into two. The first result are
+	// the Selected elements, the second is the Rejected elements.
+	//
+	//   enum.New([]int{1,2,3,4}).Partition(func(x int) { return x % 2 == 0 })
+	//   => New([]int{2,4}), New([]int{1,3})
+	Partition(predicate interface{}) (Enum, Enum)
+
 	// Reduce creates a single value from this enum.
 	//
 	//   enum.New([]int{1,2,3}).Reduce(0, func(sum, x int) int { return sum + x })

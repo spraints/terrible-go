@@ -23,6 +23,10 @@ func (emptyType) Reject(interface{}) Enum {
 	return empty
 }
 
+func (emptyType) Partition(interface{}) (Enum, Enum) {
+	return empty, empty
+}
+
 func (emptyType) Reduce(init, _ interface{}) interface{} {
 	return init
 }

@@ -68,6 +68,26 @@ func (s slice) Reject(predicate interface{}) Enum {
 	return sliceFrom(s.Type().Elem(), rejectedVals)
 }
 
+func (s slice) Partition(predicate interface{}) (Enum, Enum) {
+	fnVal := reflect.ValueOf(predicate)
+
+	inLen := s.Len()
+	selectedVals := make([]reflect.Value, 0, inLen)
+	rejectedVals := make([]reflect.Value, 0, inLen)
+
+	eachValue(s.Value, func(item reflect.Value) bool {
+		if fnVal.Call([]reflect.Value{item})[0].Bool() {
+			selectedVals = append(selectedVals, item)
+		} else {
+			rejectedVals = append(rejectedVals, item)
+		}
+		return true
+	})
+
+	itemType := s.Type().Elem()
+	return sliceFrom(itemType, selectedVals), sliceFrom(itemType, rejectedVals)
+}
+
 func (s slice) Reduce(init, reducer interface{}) interface{} {
 	fnVal := reflect.ValueOf(reducer)
 	memo := reflect.ValueOf(init)
