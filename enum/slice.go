@@ -38,6 +38,18 @@ func (s slice) Map(transform interface{}) Enum {
 	return slice{resVal}
 }
 
+func (s slice) Reduce(init, reducer interface{}) interface{} {
+	fnVal := reflect.ValueOf(reducer)
+	memo := reflect.ValueOf(init)
+
+	eachValue(s.Value, func(item reflect.Value) bool {
+		memo = fnVal.Call([]reflect.Value{memo, item})[0]
+		return true
+	})
+
+	return memo.Interface()
+}
+
 func (s slice) All(predicate interface{}) bool {
 	fnVal := reflect.ValueOf(predicate)
 

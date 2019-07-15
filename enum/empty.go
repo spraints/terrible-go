@@ -15,6 +15,10 @@ func (emptyType) Map(interface{}) Enum {
 	return empty
 }
 
+func (emptyType) Reduce(init, _ interface{}) interface{} {
+	return init
+}
+
 func (emptyType) All(interface{}) bool {
 	return true
 }

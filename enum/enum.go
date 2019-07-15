@@ -9,6 +9,7 @@ type Enum interface {
 
 	Each(fn interface{})
 	Map(transform interface{}) Enum
+	Reduce(initial, reducer interface{}) interface{}
 	All(predicate interface{}) bool
 	Any(predicate interface{}) bool
 }
