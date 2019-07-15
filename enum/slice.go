@@ -13,8 +13,9 @@ func (s slice) Get() interface{} {
 func (s slice) Each(fn interface{}) {
 	fnVal := reflect.ValueOf(fn)
 
-	eachValue(s.Value, func(item reflect.Value) {
+	eachValue(s.Value, func(item reflect.Value) bool {
 		fnVal.Call([]reflect.Value{item})
+		return true
 	})
 }
 
@@ -26,9 +27,10 @@ func (s slice) Map(transform interface{}) Enum {
 	inLen := s.Len()
 
 	outVals := make([]reflect.Value, 0, inLen)
-	eachValue(s.Value, func(item reflect.Value) {
+	eachValue(s.Value, func(item reflect.Value) bool {
 		outVal := fnVal.Call([]reflect.Value{item})[0]
 		outVals = append(outVals, outVal)
+		return true
 	})
 
 	resVal := reflect.MakeSlice(reflect.SliceOf(itemType), 0, inLen)
@@ -39,31 +41,35 @@ func (s slice) Map(transform interface{}) Enum {
 func (s slice) All(predicate interface{}) bool {
 	fnVal := reflect.ValueOf(predicate)
 
-	all := true
-	eachValue(s.Value, func(item reflect.Value) {
+	result := true
+	eachValue(s.Value, func(item reflect.Value) bool {
 		outVal := fnVal.Call([]reflect.Value{item})[0]
-		all = all && outVal.Bool()
+		result = outVal.Bool()
+		return result // continue iterating as long as the result is still true.
 	})
 
-	return all
+	return result
 }
 
 func (s slice) Any(predicate interface{}) bool {
 	fnVal := reflect.ValueOf(predicate)
 
-	any := false
-	eachValue(s.Value, func(item reflect.Value) {
+	result := false
+	eachValue(s.Value, func(item reflect.Value) bool {
 		outVal := fnVal.Call([]reflect.Value{item})[0]
-		any = any || outVal.Bool()
+		result = outVal.Bool()
+		return !result // continue iterating as long as the result is still false.
 	})
 
-	return any
+	return result
 }
 
-func eachValue(slice reflect.Value, fn func(reflect.Value)) {
+func eachValue(slice reflect.Value, fn func(reflect.Value) bool) {
 	inLen := slice.Len()
 
 	for i := 0; i < inLen; i++ {
-		fn(slice.Index(i))
+		if !fn(slice.Index(i)) {
+			break
+		}
 	}
 }
